@@ -1,3 +1,42 @@
+# 复现 Ghost
+
+先安装内核，在 18.04 上安装 generic 的 5.11 版本，然后在 ghost-kernel 中 make oldconfig 再安装。
+
+ghost-userspace 使用了 bazel 作为构建工具。尝试构建后报错：
+
+```log
+ERROR: /home/tkf/.cache/bazel/_bazel_tkf/350382a100908716e6d0c918803ea65c/external/subpar/compiler/BUILD:31:10: in py_binary rule @@subpar//compiler:compiler: 
+Traceback (most recent call last):
+	File "/virtual_builtins_bzl/common/python/py_binary_bazel.bzl", line 38, column 36, in _py_binary_impl
+	File "/virtual_builtins_bzl/common/python/py_executable_bazel.bzl", line 97, column 37, in py_executable_bazel_impl
+	File "/virtual_builtins_bzl/common/python/py_executable.bzl", line 108, column 25, in py_executable_base_impl
+	File "/virtual_builtins_bzl/common/python/py_executable.bzl", line 189, column 13, in _validate_executable
+Error in fail: It is not allowed to use Python 2
+```
+
+直接修改 BUILD 文件，将默认的 PY2 改为 PY3 后报错不再出现。
+
+需要安装 gcc-9 ，执行如下命令，gcc 版本低不支持 c++20：
+
+```sh
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt update
+sudo apt install gcc-9 g++-9
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+```
+
+安装 clang-12，执行如下命令：
+
+```sh
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh 12
+```
+
+sudo apt update 执行出现问题，amd 的机器却尝试拉取 arm64 的镜像，在 source.list 中指定架构 `[arch=amd64,i386]` 。
+
+报错 error: use of undeclared identifier 'BPF_F_MMAPABLE' ：在 ghost-kernel 目录下执行 `sudo make headers_install INSTALL_HDR_PATH=/usr` 覆盖原有的 linux headers 。
+
 # ghOSt: Fast &amp; Flexible User-Space Delegation of Linux Scheduling
 
 ghOSt is a general-purpose delegation of scheduling policy implemented on top of
