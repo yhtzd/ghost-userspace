@@ -127,9 +127,9 @@ def CopyBinaries(paths: Paths):
     paths: The paths to copy the RocksDB, Antagonist, and ghOSt binaries to.
   """
   tmp = UnzipPar()
-  CopyBinary(tmp.name + "/com_google_ghost/rocksdb", paths.rocksdb)
-  CopyBinary(tmp.name + "/com_google_ghost/antagonist", paths.antagonist)
-  CopyBinary(tmp.name + "/com_google_ghost/agent_shinjuku", paths.ghost)
+  CopyBinary(tmp.name + "/_main/rocksdb", paths.rocksdb)
+  CopyBinary(tmp.name + "/_main/antagonist", paths.antagonist)
+  CopyBinary(tmp.name + "/_main/agent_shinjuku", paths.ghost)
   tmp.cleanup()
 
 
