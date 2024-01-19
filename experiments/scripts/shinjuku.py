@@ -47,20 +47,76 @@ def RunCfs():
 def RunGhost():
   """Runs the ghOSt experiment."""
   e: Experiment = Experiment()
-  # Run throughputs 1000, 20000, 30000, ..., 130000.
-  e.throughputs = list(i for i in range(100000, 550000, 50000))
-  # Toward the end, run throughputs 140000, 141000, 142000, ..., 150000.
-  # e.throughputs.extend(list(i for i in range(140000, 151000, 1000)))
+  
   e.rocksdb = GetRocksDBOptions(Scheduler.GHOST, _NUM_CPUS, _NUM_GHOST_WORKERS)
-  e.rocksdb.range_query_ratio = 0.005
-  e.rocksdb.get_duration = "0.5us"
-  e.rocksdb.range_duration = "500us"
-  # e.rocksdb.print_format = PrintFormat.PRETTY
-  # e.rocksdb.print_distribution = True
-  e.rocksdb.experiment_duration = "5s"
   e.antagonist = None
   e.ghost = GetGhostOptions(_NUM_CPUS)
-  e.ghost.preemption_time_slice = '30us'
+  
+  e.rocksdb.experiment_duration = "10s"
+  
+  # 99.5% 4us, 0.5% 10000us, 30us
+  # e.throughputs = list(i for i in range(10000, 250000, 10000))
+  # e.throughputs.extend(list(i for i in range(250000, 285000, 2500)))
+  # e.throughputs.extend(list(i for i in range(285000, 286000, 100)))
+  # e.rocksdb.range_query_ratio = 0.005
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "4us"
+  # e.rocksdb.range_duration = "10ms"
+  # e.ghost.preemption_time_slice = '30us'
+  
+  # 99.5% 0.5us, 0.5 500us, 30us
+  # e.throughputs = list(i for i in range(100000, 1900000, 100000))
+  # e.throughputs.extend(list(i for i in range(1900000, 2000000, 10000)))
+  # e.rocksdb.range_query_ratio = 0.005
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "0.5us"
+  # e.rocksdb.range_duration = "500us"
+  # e.ghost.preemption_time_slice = '30us'
+  
+  # 50% 1us, 50% 100us, 30us
+  # e.throughputs = list(i for i in range(50000, 300000, 50000))  
+  # e.throughputs.extend(list(i for i in range(250000, 320000, 10000)))
+  # e.rocksdb.range_query_ratio = 0.5
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "1us"
+  # e.rocksdb.range_duration = "100us"
+  # e.ghost.preemption_time_slice = '30us'
+  
+  # 100% 1us 30us
+  # e.throughputs = list(i for i in range(100000, 2000000, 100000))
+  # e.throughputs.extend(list(i for i in range(1900000, 2000000, 10000)))
+  # e.rocksdb.range_query_ratio = 0
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "1us"
+  # e.ghost.preemption_time_slice = '30us'
+  
+  # 50% 1us, 50% 100us, 20us
+  # e.throughputs = list(i for i in range(50000, 300000, 50000))  
+  # e.throughputs.extend(list(i for i in range(250000, 320000, 10000)))
+  # e.rocksdb.range_query_ratio = 0.5
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "1us"
+  # e.rocksdb.range_duration = "100us"
+  # e.ghost.preemption_time_slice = "20us"
+
+
+  # 50% 1us, 50% 100us, 10us
+  # e.throughputs = list(i for i in range(50000, 300000, 50000))  
+  # e.throughputs.extend(list(i for i in range(250000, 320000, 10000)))
+  # e.rocksdb.range_query_ratio = 0.5
+  # e.rocksdb.print_ns = True
+  # e.rocksdb.get_duration = "1us"
+  # e.rocksdb.range_duration = "100us"
+  # e.ghost.preemption_time_slice = "10us"
+
+  # 50% 1us, 50% 100us, 5us
+  e.throughputs = list(i for i in range(50000, 300000, 50000))  
+  e.throughputs.extend(list(i for i in range(250000, 320000, 10000)))
+  e.rocksdb.range_query_ratio = 0.5
+  e.rocksdb.print_ns = True
+  e.rocksdb.get_duration = "1us"
+  e.rocksdb.range_duration = "100us"
+  e.ghost.preemption_time_slice = "5us"
 
   Run(e)
 
