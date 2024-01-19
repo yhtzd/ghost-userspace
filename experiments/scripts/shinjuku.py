@@ -15,14 +15,16 @@ requests are run to completion.
 
 from typing import Sequence
 from absl import app
-from experiments.scripts.options import CheckSchedulers
+from experiments.scripts.options import CheckSchedulers, PrintFormat
 from experiments.scripts.options import GetGhostOptions
 from experiments.scripts.options import GetRocksDBOptions
 from experiments.scripts.options import Scheduler
 from experiments.scripts.run import Experiment
 from experiments.scripts.run import Run
 
-_NUM_CPUS = 8
+# 4.2: 20 spinning workers threads and 1 load generator
+_NUM_CPUS = 21
+
 _NUM_CFS_WORKERS = _NUM_CPUS - 2
 _NUM_GHOST_WORKERS = 200
 
@@ -46,11 +48,16 @@ def RunGhost():
   """Runs the ghOSt experiment."""
   e: Experiment = Experiment()
   # Run throughputs 1000, 20000, 30000, ..., 130000.
-  e.throughputs = list(i for i in range(10000, 140000, 10000))
+  e.throughputs = list(i for i in range(100000, 550000, 50000))
   # Toward the end, run throughputs 140000, 141000, 142000, ..., 150000.
-  e.throughputs.extend(list(i for i in range(140000, 151000, 1000)))
+  # e.throughputs.extend(list(i for i in range(140000, 151000, 1000)))
   e.rocksdb = GetRocksDBOptions(Scheduler.GHOST, _NUM_CPUS, _NUM_GHOST_WORKERS)
   e.rocksdb.range_query_ratio = 0.005
+  e.rocksdb.get_duration = "0.5us"
+  e.rocksdb.range_duration = "500us"
+  # e.rocksdb.print_format = PrintFormat.PRETTY
+  # e.rocksdb.print_distribution = True
+  e.rocksdb.experiment_duration = "5s"
   e.antagonist = None
   e.ghost = GetGhostOptions(_NUM_CPUS)
   e.ghost.preemption_time_slice = '30us'
